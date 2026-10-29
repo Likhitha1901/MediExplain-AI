@@ -141,6 +141,9 @@ async function askMediExplain() {
     }
 
     try {
+        const imageDataUrl = attachedImageFile
+            ? await readImageAsDataURL(attachedImageFile)
+            : null;
         const response = await fetch(CHAT_API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -148,7 +151,8 @@ async function askMediExplain() {
                 message: question,
                 language: language,
                 history: historyPayload.length ? historyPayload : null,
-                doc_id: activeDocId || null
+                doc_id: activeDocId || null,
+                image_data: imageDataUrl
             })
         });
 
@@ -292,6 +296,19 @@ async function askMediExplain() {
     }
 }
 
+function readImageAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => {
+            reject(new Error("Could not read the attached image."));
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
+
 
 // ============================================================
 // COPY ANSWER FUNCTIONALITY (STRICTLY ONE VISIBLE BUTTON)
@@ -365,6 +382,39 @@ function formatMedicalAnswer(text) {
     safe = safe.replace(/(^|<br>)\s*[-•*]\s+/g, "$1<span class='answer-bullet'>•</span> ");
 
     return safe;
+}
+
+function renderMedicalTranscript(chat) {
+    if (!chat || !Array.isArray(chat.messages)) {
+        return "";
+    }
+
+    return chat.messages.map((message, index) => {
+        const question = String(message.question || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+
+        return `
+            <div class="conversation-exchange"
+                 style="margin-bottom:24px; padding-bottom:20px;
+                        border-bottom:1px solid rgba(120,180,210,0.25);">
+                <div style="color:#32e0e0; font-weight:700;
+                            margin-bottom:10px;">
+                    Question ${index + 1}
+                </div>
+
+                <div style="margin-bottom:14px; font-weight:600;">
+                    ${question}
+                </div>
+
+                <div style="color:#d6e8f5; line-height:1.8;">
+                    ${formatMedicalAnswer(message.answer || "")}
+                </div>
+            </div>
+        `;
+    }).join("");
 }
 
 
@@ -532,10 +582,14 @@ async function handlePdfUpload(event) {
             const reader = new FileReader();
             reader.onload = () => {
                 const res = reader.result;
-                const base64 = typeof res === "string" && res.includes(",") ? res.split(",")[1] : res;
+                const base64 =
+                    typeof res === "string" && res.includes(",") 
+                    ? res.split(",")[1] 
+                    : res;
                 resolve(base64);
             };
-            reader.onerror = () => reject(new Error("Failed to read file"));
+            reader.onerror = () =>
+                reject(new Error("Failed to read file"));
             reader.readAsDataURL(file);
         });
 
@@ -549,12 +603,15 @@ async function handlePdfUpload(event) {
                 file_base64: base64Data
             })
         });
-            body: formData
-        });
+            
 
         if (!resp.ok) {
             const err = await resp.json();
-            throw new Error(err.detail ? (err.detail.message || JSON.stringify(err.detail)) : `Upload failed (${resp.status})`);
+            throw new Error(
+                err.detail
+                ? (err.detail.message || JSON.stringify(err.detail))
+                : `Upload failed (${resp.status})`
+            );
         }
 
         const data = await resp.json();
@@ -994,9 +1051,14 @@ function loadMedicalChats() {
 
 function saveMedicalChats() {
     try {
-        localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(medicalChats));
+        localStorage.setItem(
+            CHAT_HISTORY_KEY,
+            JSON.stringify(medicalChats));
+        return true;
     } catch (e) {
         console.error("Unable to save chat history:", e);
+        showToast("Unable to save chat history. Check browser storage.");
+        return false;
     }
 }
 
@@ -1087,7 +1149,7 @@ function openMedicalChat(chatId) {
         lastActiveQuestion = lastMsg.question;
 
         if (questionInput) questionInput.value = lastMsg.question || "";
-        if (answer) answer.innerHTML = formatMedicalAnswer(lastMsg.answer);
+        if (answer) answer.innerHTML = renderMedicalTranscript(currentChat);
         if (confidence) confidence.textContent = lastMsg.confidence || "Unknown";
         if (safetyLevel) safetyLevel.textContent = lastMsg.safetyLevel || "Normal";
         if (safetyMessage) safetyMessage.textContent = lastMsg.safetyMessage || "";
