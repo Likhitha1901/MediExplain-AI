@@ -3,3 +3,15 @@ uvicorn
 python-dotenv
 pydantic
 requests
+chromadb
+sentence-transformers
+pypdf
+python-docx
+openai
+pillow
+opencv-python
+rapidocr-onnxruntime
+pypdfium2
+torchvision
+sentencepiece
+tiktoken

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MediExplain AI | Evaluation Dashboard</title>
+<style>
+:root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#eaf5ff;background:#061a2c}*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 15% 0,#103a56 0,transparent 38%),#061a2c}
+main{max-width:1240px;margin:auto;padding:30px 22px 60px}header{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.eyebrow{color:#35e2dc;font-weight:800;letter-spacing:1.6px;font-size:11px}h1{margin:8px 0;font-size:clamp(28px,4vw,38px)}
+.sub{color:#b6cfe1;line-height:1.6;margin:0}.pill{border:1px solid #28627e;padding:9px 13px;border-radius:99px;color:#9cebe7;font-size:12px}
+.panel{background:rgba(8,39,62,.92);border:1px solid #1b5874;border-radius:16px;padding:20px;margin:18px 0}
+.notice{border-color:#876a35;background:#2c281f;color:#f3dfb5;line-height:1.55}.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+button{border:1px solid #2b91a7;background:#0c526c;color:#fff;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer}
+button.primary{background:linear-gradient(100deg,#20d9d1,#00b8d7);color:#042236;border:0}button:disabled{opacity:.5;cursor:wait}
+textarea{width:100%;min-height:265px;resize:vertical;background:#041a2b;color:#eaf5ff;border:1px solid #28627e;border-radius:12px;padding:14px;font:13px/1.5 Consolas,monospace}
+label{color:#c6deee;font-size:13px}input[type=number]{width:76px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.metric{border:1px solid #205572;border-radius:13px;padding:16px;background:#0a2b45}
+.metric .name{font-size:12px;color:#b7d1e2}.metric strong{display:block;color:#35e2dc;font-size:25px;margin:12px 0 8px;overflow-wrap:anywhere}
+.metric small{color:#b6cfe1;line-height:1.5;display:block}.subhead{margin:24px 0 12px;color:#9cebe7}
+#message{white-space:pre-wrap;color:#cde4f5;line-height:1.5;margin-top:12px}.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:10px;border-bottom:1px solid #1d4963;vertical-align:top;font-size:13px}th{color:#9cebe7}
+.relevant{color:#50e2a3}.not-relevant{color:#ffb1a5}a{color:#67dfe8}.notes{color:#b6cfe1;line-height:1.7}footer{color:#789eb8;font-size:12px;text-align:center;margin-top:25px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){main{padding:20px 12px}.grid{grid-template-columns:1fr}.panel{padding:15px}}
+</style></head><body><main>
+<header><div><div class="eyebrow">MEDIEXPLAIN AI · RETRIEVAL & QUALITY TESTING</div><h1>Evaluation Dashboard</h1>
+<p class="sub">Compare raw ChromaDB retrieval with your actual MedicalReranker, using labelled test questions.</p></div><span class="pill" id="apiStatus">Checking backend…</span></header>
+<section class="panel notice"><b>Important — no invented scores</b><br>Retrieval metrics use expected document titles. Answer correctness, faithfulness, citation accuracy, and safety require reviewed labels. A small test set is only a preliminary signal.</section>
+<section class="panel"><h2>1. Evaluation dataset</h2><p class="sub">Each question needs one or more expected relevant document titles that match your ChromaDB metadata.</p>
+<div class="controls" style="margin:16px 0"><button id="loadSample">Load example</button><label>Import JSON <input id="fileInput" type="file" accept=".json,application/json"></label><button id="downloadJson">Download dataset</button><label>Top K <input id="kValue" type="number" min="1" max="20" value="5"></label><label>Candidate pool <input id="candidateK" type="number" min="1" max="50" value="10"></label></div>
+<textarea id="dataset" spellcheck="false"></textarea><div class="controls" style="margin-top:14px"><button class="primary" id="runEvaluation">Run evaluation</button><span id="message" role="status"></span></div></section>
+<section class="panel"><h2>2. Raw retrieval vs reranked retrieval</h2>
+<p class="sub">The raw baseline uses ChromaDB's initial ranking. The reranked result uses the same MedicalReranker class as your chat route.</p>
+<h3 class="subhead">Raw ChromaDB results</h3><div class="grid" id="rawMetrics"></div>
+<h3 class="subhead">After MedicalReranker</h3><div class="grid" id="rerankMetrics"></div>
+<h3 class="subhead">Answer and system metrics</h3><div class="grid" id="otherMetrics"></div><p id="labelCounts" class="sub" style="margin-top:18px"></p></section>
+<section class="panel"><h2>3. Raw retrieved results</h2><div class="table-wrap"><table><thead><tr><th>Question</th><th>Rank</th><th>Title</th><th>Source</th><th>Label</th></tr></thead><tbody id="rawRows"><tr><td colspan="5">Run evaluation to see results.</td></tr></tbody></table></div>
+<h2 style="margin-top:30px">4. Reranked results</h2><div class="table-wrap"><table><thead><tr><th>Question</th><th>Rank</th><th>Title</th><th>Source</th><th>Label</th></tr></thead><tbody id="rerankedRows"><tr><td colspan="5">Run evaluation to see results.</td></tr></tbody></div></section>
+<section class="panel"><h2>How to interpret</h2><ul class="notes">
+<li><b>Hit Rate@K:</b> share of labelled questions with at least one expected relevant title in the top K.</li>
+<li><b>Precision@K:</b> matching results divided by K.</li><li><b>MRR:</b> reciprocal rank of the first relevant title, averaged over questions.</li>
+<li><b>Answer correctness, faithfulness, citation accuracy, safety:</b> enter true/false only after reviewing the actual answer and sources.</li>
+<li><b>Latency:</b> retrieval and reranker latency are measured separately. Full response latency must be recorded in your main chat route.</li>
+</ul></section><footer>Research evaluation only · Not a clinical validation tool</footer></main>
+<script>
+const $=id=>document.getElementById(id), ds=$("dataset"), msg=$("message");
+const sample=[
+{"question":"What are the symptoms of iron deficiency anemia?","relevant_titles":["Iron","Iron Deficiency"],"answer_correct":null,"faithful":null,"citation_correct":null,"safety_expected":false,"safety_passed":null,"answer_latency_seconds":null},
+{"question":"What are the common side effects of metformin?","relevant_titles":["Metformin Information"],"answer_correct":null,"faithful":null,"citation_correct":null,"safety_expected":false,"safety_passed":null,"answer_latency_seconds":null}
+];
+function showJson(x){ds.value=JSON.stringify(x,null,2)}showJson(sample);
+$("loadSample").onclick=()=>showJson(sample);
+$("fileInput").onchange=async e=>{if(!e.target.files[0])return;try{showJson(JSON.parse(await e.target.files[0].text()));msg.textContent="Dataset loaded."}catch(err){msg.textContent="Invalid JSON: "+err.message}};
+$("downloadJson").onclick=()=>{try{const b=new Blob([JSON.stringify(JSON.parse(ds.value),null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="evaluation_dataset.json";a.click();URL.revokeObjectURL(a.href)}catch(e){msg.textContent="Fix JSON first: "+e.message}};
+const pct=v=>v==null?"Not evaluated":(v*100).toFixed(1)+"%";
+const num=(v,s=3)=>v==null?"Not evaluated":Number(v).toFixed(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function cards(target,items){$(target).innerHTML=items.map(x=>`<article class="metric"><span class="name">${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small></article>`).join("")}
+function renderRows(target,rows){let html="";for(const row of rows){if(!row.retrieved.length){html+=`<tr><td>${esc(row.question)}</td><td colspan="4">No results</td></tr>`;continue}for(const d of row.retrieved){html+=`<tr><td>${esc(row.question)}</td><td>${d.rank}</td><td>${esc(d.title)}</td><td>${esc(d.source)}${d.url?`<br><a href="${esc(d.url)}" target="_blank" rel="noopener">Open source</a>`:""}</td><td class="${d.relevant===true?"relevant":d.relevant===false?"not-relevant":""}">${d.relevant==null?"Not labelled":d.relevant?"Relevant":"Not relevant"}</td></tr>`}}$(target).innerHTML=html}
+async function health(){try{let r=await fetch("/api/health"),d=await r.json();$("apiStatus").textContent=d.status==="ok"&&d.vector_store_imported&&d.reranker_imported?"Backend + reranker connected":"Backend issue";if(d.import_error)$("apiStatus").title=d.import_error}catch(e){$("apiStatus").textContent="Backend unavailable"}}health();
+$("runEvaluation").onclick=async()=>{let cases;try{cases=JSON.parse(ds.value);if(!Array.isArray(cases)||!cases.length)throw Error("Dataset must be a non-empty JSON array")}catch(e){msg.textContent="JSON error: "+e.message;return}
+const btn=$("runEvaluation");btn.disabled=true;msg.textContent="Running raw retrieval and reranker…";
+try{const r=await fetch("/api/evaluation/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({cases,k:Math.max(1,Math.min(20,+$("kValue").value||5)),candidate_k:Math.max(1,Math.min(50,+$("candidateK").value||10))})});const d=await r.json();if(!r.ok)throw Error(d.detail||"Evaluation failed");
+const raw=d.raw_retrieval_metrics, rr=d.reranked_metrics, o=d.other_metrics;
+const retrievalCards=m=>[
+["Hit Rate@"+d.k,pct(m.recall_at_k),"Questions with at least one relevant title in top K."],
+["Precision@"+d.k,pct(m.precision_at_k),"Relevant results divided by K."],
+["MRR",num(m.mrr),"Mean reciprocal rank of first relevant result."]
+];
+cards("rawMetrics",retrievalCards(raw));cards("rerankMetrics",retrievalCards(rr));
+cards("otherMetrics",[
+["Answer correctness",pct(o.answer_correctness),"Human-reviewed labels only."],
+["Faithfulness",pct(o.faithfulness),"Human-reviewed labels only."],
+["Citation accuracy",pct(o.citation_accuracy),"Human-reviewed labels only."],
+["Safety pass rate",pct(o.safety_pass_rate),"Reviewed expected safety cases only."],
+["Mean retrieval latency",o.mean_retrieval_latency_seconds==null?"Not evaluated":num(o.mean_retrieval_latency_seconds,4)+" s","ChromaDB search time."],
+["Mean rerank latency",o.mean_rerank_latency_seconds==null?"Not evaluated":num(o.mean_rerank_latency_seconds,4)+" s","Reranker time."]
+]);
+const c=d.label_counts;$("labelCounts").textContent=`Cases: ${d.case_count} · Retrieval-labelled: ${c.retrieval_labelled_cases} · Answer labels: ${c.answer_correctness_labelled} · Faithfulness labels: ${c.faithfulness_labelled} · Citation labels: ${c.citation_labelled} · Safety labels: ${c.safety_labelled}`;
+renderRows("rawRows",d.raw_rows);renderRows("rerankedRows",d.reranked_rows);msg.textContent="Done. Compare raw vs reranked metrics; inspect titles and verify labels.";
+}catch(e){msg.textContent="Error: "+e.message}finally{btn.disabled=false}};
+</script></body></html>

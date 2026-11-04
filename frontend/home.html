@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediExplain AI | Understand Your Health</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            color: #f7fbff;
+            background: #032747;
+        }
+
+        .home-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background:
+                radial-gradient(ellipse at 82% 42%, #075d80 0%, transparent 38%),
+                linear-gradient(115deg, #032340, #063d66 60%, #042746);
+        }
+
+        .home-header {
+            min-height: 84px;
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(64, 210, 235, .35);
+        }
+
+        .home-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .home-logo {
+            width: 58px;
+            height: 58px;
+            display: grid;
+            place-items: center;
+            border-radius: 17px;
+            background: #08cbbd;
+            color: white;
+            font-size: 43px;
+            font-weight: 800;
+        }
+
+        .home-brand-name {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .home-brand-name span,
+        .home-highlight {
+            color: #21e0d5;
+        }
+
+        .home-subtitle {
+            margin-top: 4px;
+            color: #d0e3f2;
+            font-size: 14px;
+        }
+
+        .home-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .home-status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #12d7c4;
+        }
+
+        .home-hero {
+            flex: 1;
+            width: 88%;
+            max-width: 1450px;
+            margin: auto;
+            padding: 65px 0;
+            display: grid;
+            grid-template-columns: 1.15fr .85fr;
+            align-items: center;
+            gap: 45px;
+        }
+
+        .home-eyebrow {
+            display: inline-block;
+            padding: 12px 18px;
+            border: 1px solid #0ebdbd;
+            border-radius: 28px;
+            color: #3de6df;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .home-hero h1 {
+            margin: 0;
+            font-size: clamp(44px, 5.2vw, 76px);
+            line-height: 1.08;
+            letter-spacing: -2.5px;
+        }
+
+        .home-description {
+            max-width: 720px;
+            margin: 25px 0;
+            color: #d5e5f4;
+            font-size: 19px;
+            line-height: 1.7;
+        }
+
+        .home-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 30px;
+        }
+
+        .home-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 23px;
+            border-radius: 13px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            transition: transform .2s, background .2s;
+        }
+
+        .home-button:hover {
+            transform: translateY(-3px);
+        }
+
+        .home-button-primary {
+            background: #08cbbd;
+            color: #032c46;
+        }
+
+        .home-button-secondary {
+            border: 1px solid #7baacb;
+            color: white;
+            background: rgba(255,255,255,.03);
+        }
+
+        .home-trust {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 35px;
+            color: #d5e5f4;
+        }
+
+        .home-trust span {
+            color: #21e0d5;
+            margin-right: 7px;
+            font-weight: 800;
+        }
+
+        .home-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .home-medical-art {
+            width: min(100%, 490px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            position: relative;
+            background:
+                radial-gradient(circle, rgba(16, 226, 242, .25), transparent 57%);
+        }
+
+        .home-medical-art::before,
+        .home-medical-art::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(38, 220, 248, .48);
+            border-radius: 50%;
+        }
+
+        .home-medical-art::before {
+            inset: 8%;
+            box-shadow: 0 0 45px rgba(0, 205, 255, .15);
+        }
+
+        .home-medical-art::after {
+            inset: 18%;
+            border-style: dashed;
+        }
+
+        .home-medical-symbol {
+            z-index: 1;
+            width: 180px;
+            height: 180px;
+            display: grid;
+            place-items: center;
+            border-radius: 45px;
+            background: linear-gradient(145deg, #16e5e0, #087ba9);
+            box-shadow: 0 0 70px rgba(0, 225, 255, .35);
+            font-size: 112px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .home-float-card {
+            position: absolute;
+            z-index: 2;
+            padding: 16px 19px;
+            border: 1px solid rgba(77, 221, 248, .6);
+            border-radius: 13px;
+            background: rgba(3, 43, 76, .93);
+            box-shadow: 0 10px 35px rgba(0,0,0,.2);
+            font-weight: 600;
+        }
+
+        .home-float-one {
+            top: 17%;
+            left: 0;
+        }
+
+        .home-float-two {
+            right: 0;
+            bottom: 23%;
+        }
+
+        .home-footer {
+            padding: 24px 15px;
+            text-align: center;
+            border-top: 1px solid rgba(64, 210, 235, .35);
+            color: #c5d9e9;
+            line-height: 1.9;
+        }
+
+        .home-footer strong {
+            color: white;
+            font-size: 21px;
+        }
+
+        .home-footer span {
+            color: #21e0d5;
+        }
+
+        @media (max-width: 850px) {
+            .home-hero {
+                grid-template-columns: 1fr;
+                padding: 48px 0;
+            }
+
+            .home-visual {
+                min-height: 300px;
+            }
+
+            .home-medical-art {
+                max-width: 340px;
+            }
+
+            .home-medical-symbol {
+                width: 125px;
+                height: 125px;
+                border-radius: 32px;
+                font-size: 78px;
+            }
+
+            .home-brand-name {
+                font-size: 21px;
+            }
+
+            .home-logo {
+                width: 46px;
+                height: 46px;
+                font-size: 34px;
+            }
+
+            .home-status {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="home-page">
+
+    <header class="home-header">
+        <div class="home-brand">
+            <div class="home-logo">+</div>
+            <div>
+                <div class="home-brand-name">
+                    MediExplain <span>AI</span>
+                </div>
+                <div class="home-subtitle">
+                    Medical Information Assistant
+                </div>
+            </div>
+        </div>
+
+        <div class="home-status">
+            <span class="home-status-dot"></span>
+            AI Assistant
+        </div>
+    </header>
+
+    <main class="home-hero">
+        <section>
+            <div class="home-eyebrow">
+                ✦ &nbsp; Evidence-based medical information
+            </div>
+
+            <h1>
+                Understand your health.<br>
+                <span class="home-highlight">Clearly.</span>
+            </h1>
+
+            <p class="home-description">
+                MediExplain AI transforms reliable medical information
+                into clear, patient-friendly explanations — supported
+                by evidence and source citations.
+            </p>
+
+            <div class="home-actions">
+                <a href="chat.html" class="home-button home-button-primary">
+                    Ask a medical question <span>→</span>
+                </a>
+
+                <a href="about.html" class="home-button home-button-secondary">
+                    See how it works
+                </a>
+            </div>
+
+            <div class="home-trust">
+                <div><span>✓</span> Evidence-based</div>
+                <div><span>✓</span> Patient-friendly</div>
+                <div><span>✓</span> Safety-aware</div>
+            </div>
+        </section>
+
+        
+        <section class="home-visual" aria-label="Medical AI illustration">
+            <img
+                src="medical_hologram.png"
+                alt="Futuristic medical hologram with human anatomy and diagnostic panels"
+                class="medical-hologram"
+            >
+        </section>
+
+    </main>
+
+    <footer class="home-footer">
+        <strong>✚ MediExplain <span>AI</span></strong>
+        <div>Educational medical information powered by AI and evidence.</div>
+        <div>© 2026 MediExplain AI · For educational purposes only.</div>
+    </footer>
+
+</div>
+</body>
+</html>
