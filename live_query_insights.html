@@ -1,0 +1,64 @@
+<!-- Live Query Insights: insert below your existing responseSection, or inside it. -->
+<section id="liveQueryInsights" class="live-insights hidden" aria-live="polite">
+  <div class="live-insights-header">
+    <div>
+      <p class="live-insights-eyebrow">MEDIEXPLAIN AI · QUERY ANALYTICS</p>
+      <h2>Live Query Insights</h2>
+      <p class="live-insights-subtitle">Technical diagnostics for this question. These metrics do not replace clinical review.</p>
+    </div>
+    <span id="liveInsightsStatus" class="live-insights-status">Waiting for query</span>
+  </div>
+
+  <div class="live-insights-query">
+    <span class="live-insights-label">Question analyzed</span>
+    <p id="liveInsightsQuestion">—</p>
+  </div>
+
+  <div class="live-insights-metrics">
+    <article class="live-insights-card">
+      <span>Retrieval time</span>
+      <strong id="liveInsightsRetrievalTime">Not available</strong>
+      <small>Time to fetch candidate passages</small>
+    </article>
+    <article class="live-insights-card">
+      <span>Reranking time</span>
+      <strong id="liveInsightsRerankTime">Not available</strong>
+      <small>Time to reorder retrieved passages</small>
+    </article>
+    <article class="live-insights-card">
+      <span>Total response time</span>
+      <strong id="liveInsightsTotalTime">Not available</strong>
+      <small>End-to-end time for this answer</small>
+    </article>
+    <article class="live-insights-card">
+      <span>Hit Rate@5</span>
+      <strong id="liveInsightsHitRate">Not evaluated</strong>
+      <small>Requires verified relevance labels</small>
+    </article>
+    <article class="live-insights-card">
+      <span>Precision@5</span>
+      <strong id="liveInsightsPrecision">Not evaluated</strong>
+      <small>Requires verified relevance labels</small>
+    </article>
+    <article class="live-insights-card">
+      <span>Answer quality</span>
+      <strong id="liveInsightsAnswerQuality">Not evaluated</strong>
+      <small>Requires review against trusted evidence</small>
+    </article>
+  </div>
+
+  <div class="live-insights-sources">
+    <div class="live-insights-section-heading">
+      <h3>Retrieved evidence</h3>
+      <span id="liveInsightsSourceCount">0 documents</span>
+    </div>
+    <p class="live-insights-note">Documents are shown without rank numbers. A relevance score is shown only when the backend provides one.</p>
+    <div id="liveInsightsDocuments" class="live-insights-documents">
+      <p class="live-insights-empty">No query diagnostics available yet.</p>
+    </div>
+  </div>
+
+  <p id="liveInsightsDisclaimer" class="live-insights-disclaimer">
+    Live retrieval statistics describe system behaviour, not whether a medical answer is clinically correct.
+  </p>
+</section>

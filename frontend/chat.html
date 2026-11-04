@@ -11,19 +11,25 @@
 </head>
 <body class="chat-page">
 
+<!-- MOBILE SIDEBAR BACKDROP OVERLAY -->
+<div id="sidebarBackdrop" class="sidebar-backdrop hidden" onclick="toggleSidebar(false)"></div>
+
 <div class="chat-app">
 
     <!-- SIDEBAR -->
     <aside class="chat-sidebar" id="chatSidebar">
         <div class="sidebar-brand">
-            <div class="sidebar-logo">+</div>
-            <div>
-                <h2>MediExplain <span>AI</span></h2>
-                <p>Medical Information Assistant</p>
+            <div class="sidebar-brand-left">
+                <div class="sidebar-logo">+</div>
+                <div>
+                    <h2>MediExplain <span>AI</span></h2>
+                    <p>Medical Information Assistant</p>
+                </div>
             </div>
+            <button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" onclick="toggleSidebar(false)" aria-label="Close sidebar">✕</button>
         </div>
 
-        <button type="button" class="new-chat-button" id="newChatButton">
+        <button type="button" class="new-chat-button" id="newChatButton" onclick="startNewMedicalChat()">
             <span>＋</span> New Chat
         </button>
 
@@ -50,6 +56,7 @@
                     class="sidebar-toggle"
                     id="sidebarToggle"
                     aria-label="Toggle sidebar"
+                    onclick="toggleSidebar()"
                 >☰</button>
 
                 <div class="topbar-title">
@@ -79,10 +86,15 @@
                 </h2>
 
                 <p>
-                    Ask about diseases, symptoms, medications, side effects, or medical terminology.
-                    MediExplain retrieves verified medical references and delivers patient-friendly explanations.
+                    Ask about diseases, symptoms, medications, side effects, lab reports, or doctor prescriptions.
+                    MediExplain retrieves verified clinical references and delivers patient-friendly explanations.
                 </p>
             </section>
+
+            <!-- CONVERSATION THREAD (PREVIOUS MESSAGES RESTORATION) -->
+            <div id="conversationThread" class="conversation-thread hidden">
+                <!-- Restored conversation turns render here -->
+            </div>
 
             <!-- QUESTION CARD -->
             <section class="chat-question-card" id="ask">
@@ -90,7 +102,7 @@
                 <div class="chat-input-heading">
                     <div>
                         <label for="question">Your medical question</label>
-                        <p>Be as specific as possible for grounded, relevant medical explanations.</p>
+                        <p>Ask a general question, follow up on earlier answers, or attach reports/prescriptions.</p>
                     </div>
                     <div class="input-actions-header">
                         <button type="button" id="voiceInputBtn" class="tool-icon-btn" title="Voice Input" onclick="toggleVoiceInput()">
@@ -106,14 +118,14 @@
                 <div class="textarea-wrapper">
                     <textarea
                         id="question"
-                        rows="5"
+                        rows="4"
                         maxlength="600"
                         placeholder="Example: What are the common side effects of metformin, and what precautions should I follow?"
                     ></textarea>
                 </div>
 
                 <div class="chat-input-hint">
-                    <span>💡 Ask about symptoms, diseases, medications, side effects, or treatments.</span>
+                    <span>💡 Ask about symptoms, medications, lab values, treatments, or attach reports.</span>
                     <span id="questionCount">0/600</span>
                 </div>
 
@@ -131,14 +143,16 @@
 
                         <!-- ATTACHMENT BUTTONS -->
                         <div class="attachment-actions">
+                            <!-- PDF MEDICAL REPORT -->
                             <input type="file" id="pdfFileInput" accept=".pdf" class="hidden" onchange="handlePdfUpload(event)">
-                            <button type="button" class="attach-btn" onclick="document.getElementById('pdfFileInput').click()" title="Attach medical reference PDF">
-                                📎 Attach PDF
+                            <button type="button" class="attach-btn" onclick="document.getElementById('pdfFileInput').click()" title="Attach PDF Medical Report">
+                                📄 Upload PDF Report
                             </button>
 
-                            <input type="file" id="imageFileInput" accept="image/png,image/jpeg,image/webp" class="hidden" onchange="handleImageAttach(event)">
-                            <button type="button" class="attach-btn" onclick="document.getElementById('imageFileInput').click()" title="Attach medical image for reference">
-                                🖼️ Attach Image
+                            <!-- PRESCRIPTION IMAGE -->
+                            <input type="file" id="prescriptionFileInput" accept="image/png,image/jpeg,image/webp,image/jpg" class="hidden" onchange="handlePrescriptionUpload(event)">
+                            <button type="button" class="attach-btn" onclick="document.getElementById('prescriptionFileInput').click()" title="Upload Doctor's Prescription Image">
+                                💊 Upload Prescription
                             </button>
                         </div>
                     </div>
@@ -155,7 +169,7 @@
 
                 <!-- QUICK QUESTIONS -->
                 <div class="chat-quick-section">
-                    <div class="chat-quick-title">Common Medical Questions</div>
+                    <div class="chat-quick-title">Common Medical Inquiries</div>
 
                     <div class="chat-quick-buttons">
                         <button type="button" onclick="setQuestion('What are the symptoms of diabetes and how is it diagnosed?')">
@@ -166,8 +180,8 @@
                             💊 Metformin side effects
                         </button>
 
-                        <button type="button" onclick="setQuestion('What is asthma, what triggers flare-ups, and how is it managed?')">
-                            🫁 Asthma overview
+                        <button type="button" onclick="setQuestion('Compare the available treatments for asthma.')">
+                            🫁 Compare Asthma Treatments
                         </button>
 
                         <button type="button" onclick="setQuestion('How is high blood pressure treated and prevented?')">
@@ -182,13 +196,13 @@
                 <div class="loading-animation">
                     <span></span><span></span><span></span>
                 </div>
-                <h3>Reviewing trusted medical sources...</h3>
-                <p>Retrieving relevant knowledge, ranking medical passages, and preparing patient-friendly guidance.</p>
+                <h3>Reviewing verified medical sources...</h3>
+                <p>Retrieving evidence across NHS, Mayo Clinic, Cleveland Clinic, NIDDK, WHO & MedlinePlus.</p>
                 <div class="loading-steps">
                     <span>Retrieval</span><span>•</span>
                     <span>Safety Check</span><span>•</span>
                     <span>Reranking</span><span>•</span>
-                    <span>Plain Explanation</span>
+                    <span>Patient Explanation</span>
                 </div>
             </div>
 
@@ -198,11 +212,10 @@
                 <div class="response-heading">
                     <div>
                         <div class="section-label">EVIDENCE-BASED MEDICAL EXPLANATION</div>
-                        <h2>Your Explanation</h2>
+                        <h2 id="responseHeadingTitle">Your Explanation</h2>
                         <p>Synthesized from verified medical references and patient guidelines.</p>
                     </div>
 
-                    <!-- STRICTLY ONE VISIBLE COPY BUTTON -->
                     <button type="button" class="copy-button" id="copyButton" onclick="copyAnswer()">
                         📋 Copy answer
                     </button>
@@ -214,13 +227,13 @@
                         <div class="medical-icon">+</div>
                         <div class="header-text-group">
                             <h3>Medical Explanation</h3>
-                            <span>Clear, patient-friendly information</span>
+                            <span>Select any word or sentence to get an instant plain-language explanation</span>
                         </div>
                         <button type="button" id="speakButton" class="speech-toggle-btn" onclick="toggleSpeech()" title="Read aloud">
                             🔊 Listen
                         </button>
                     </div>
-                    <div id="answer" class="answer"></div>
+                    <div id="answer" class="answer selectable-answer-area"></div>
                 </div>
 
                 <!-- METRICS GRID -->
@@ -240,7 +253,7 @@
                     </div>
                 </div>
 
-                <!-- MEDICAL TERMINOLOGY SIMPLIFIER (PHASE 3D) -->
+                <!-- MEDICAL TERMINOLOGY SIMPLIFIER -->
                 <div id="terminologyCard" class="terminology-card hidden">
                     <div class="terminology-header">
                         <div class="terminology-icon">📖</div>
@@ -264,7 +277,7 @@
                     <p id="safetyMessage"></p>
                 </div>
 
-                <!-- EVIDENCE EXPLORER (PHASE 5) -->
+                <!-- EVIDENCE EXPLORER -->
                 <div id="evidenceExplorerCard" class="evidence-explorer-card">
                     <div class="evidence-explorer-header">
                         <div>
@@ -288,7 +301,7 @@
                     <div id="sources" class="sources-list"></div>
                 </div>
 
-                <!-- INTERACTIVE ACTION BAR (PHASES 9 & 10) -->
+                <!-- INTERACTIVE ACTION BAR -->
                 <div class="action-tools-bar">
                     <button type="button" class="tool-action-btn" onclick="openReportModal()">
                         📄 Generate Medical Report
@@ -300,7 +313,7 @@
                         🩺 Questions for Doctor
                     </button>
                     <button type="button" class="ask-another-button" id="askAnotherButton">
-                        ← Ask another question
+                        ← Ask follow-up question
                     </button>
                 </div>
 
@@ -314,6 +327,36 @@
         </footer>
 
     </main>
+</div>
+
+<!-- =========================================================
+     FLOATING TOOLTIP & CARD FOR WORD SELECTION (PHASE 6)
+========================================================= -->
+<div id="wordSelectionPill" class="selection-floating-pill hidden">
+    <button type="button" id="explainSelectionBtn" onclick="explainCurrentSelection()">
+        💡 Explain this
+    </button>
+</div>
+
+<div id="wordExplanationModal" class="word-explanation-card hidden">
+    <div class="word-explanation-header">
+        <div>
+            <span class="word-explanation-eyebrow">MEDICAL TERM EXPLAINED</span>
+            <h4 id="selectionTermTitle">Term</h4>
+        </div>
+        <button type="button" class="word-close-btn" onclick="closeWordExplanation()" aria-label="Close">×</button>
+    </div>
+    <div class="word-explanation-body">
+        <p id="selectionDefinition" class="word-definition"></p>
+        <div id="selectionImportanceWrapper" class="word-meta-section">
+            <strong>Clinical Context:</strong>
+            <span id="selectionImportance"></span>
+        </div>
+        <div id="selectionExampleWrapper" class="word-meta-section">
+            <strong>Reference / Example:</strong>
+            <span id="selectionExample"></span>
+        </div>
+    </div>
 </div>
 
 <!-- =========================================================
@@ -338,16 +381,20 @@
 </div>
 
 <!-- =========================================================
-     MODAL 2: TREATMENT COMPARISON TABLE
+     MODAL 2: TREATMENT COMPARISON TABLE (PHASE 4)
 ========================================================= -->
 <div id="treatmentModal" class="modal-overlay hidden" onclick="closeModalOnBackdrop(event, 'treatmentModal')">
-    <div class="modal-card">
+    <div class="modal-card treatment-modal-card">
         <div class="modal-header">
             <div>
                 <span class="modal-eyebrow">TREATMENT ANALYSIS</span>
                 <h2 id="treatmentModalTitle">Evidence-Based Treatment Comparison</h2>
             </div>
             <button type="button" class="modal-close-btn" onclick="closeModal('treatmentModal')" aria-label="Close modal">×</button>
+        </div>
+        <div class="treatment-search-bar">
+            <input type="text" id="treatmentConditionInput" placeholder="Enter condition (e.g. Asthma, Hypertension, Diabetes, Migraine)..." onkeydown="if(event.key==='Enter') executeTreatmentCompare()">
+            <button type="button" class="treatment-search-btn" onclick="executeTreatmentCompare()">Compare Treatments</button>
         </div>
         <div class="modal-body" id="treatmentBody">
             <!-- Dynamic treatment comparison table -->
@@ -369,6 +416,45 @@
         </div>
         <div class="modal-body" id="doctorBody">
             <!-- Dynamic doctor discussion summary -->
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAL 4: PDF MEDICAL REPORT EXPLANATION (PHASE 2)
+========================================================= -->
+<div id="pdfReportModal" class="modal-overlay hidden" onclick="closeModalOnBackdrop(event, 'pdfReportModal')">
+    <div class="modal-card report-modal-card">
+        <div class="modal-header">
+            <div>
+                <span class="modal-eyebrow">LABORATORY REPORT EXPLANATION</span>
+                <h2 id="pdfModalReportTitle">Medical Report Analysis</h2>
+            </div>
+            <div class="modal-header-actions">
+                <button type="button" class="modal-print-btn" onclick="window.print()">🖨️ Print / Save PDF</button>
+                <button type="button" class="modal-close-btn" onclick="closeModal('pdfReportModal')" aria-label="Close modal">×</button>
+            </div>
+        </div>
+        <div class="modal-body" id="pdfReportModalBody">
+            <!-- Dynamic PDF report analysis -->
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAL 5: PRESCRIPTION IMAGE OCR & REVIEW (PHASE 3)
+========================================================= -->
+<div id="prescriptionModal" class="modal-overlay hidden" onclick="closeModalOnBackdrop(event, 'prescriptionModal')">
+    <div class="modal-card prescription-modal-card">
+        <div class="modal-header">
+            <div>
+                <span class="modal-eyebrow">PRESCRIPTION RECOGNITION & EXPLANATION</span>
+                <h2>Doctor's Prescription Verification</h2>
+            </div>
+            <button type="button" class="modal-close-btn" onclick="closeModal('prescriptionModal')" aria-label="Close modal">×</button>
+        </div>
+        <div class="modal-body" id="prescriptionModalBody">
+            <!-- Dynamic Prescription content -->
         </div>
     </div>
 </div>

@@ -3464,3 +3464,795 @@ CHAT HISTORY SIDEBAR
         font-size: 24px;
     }
 }
+
+
+/* =========================================================
+   PHASES 1-8 NEW STYLES: CONVERSATIONS, PDF, PRESCRIPTION,
+   WORD EXPLANATION, TREATMENT COMPARISON & RESPONSIVE
+========================================================= */
+
+/* Mobile Backdrop for Sidebar */
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(3, 35, 64, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+}
+
+.sidebar-brand-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-close-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #a2c4d6;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.sidebar-close-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Conversation Thread (Phase 1 & 5) */
+.conversation-thread {
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.thread-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: rgba(8, 203, 189, 0.08);
+    border: 1px solid rgba(8, 203, 189, 0.25);
+    border-radius: 12px;
+    font-size: 13px;
+    color: #21e0d5;
+    font-weight: 600;
+}
+
+.thread-title-badge {
+    background: rgba(33, 224, 213, 0.15);
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    color: #ffffff;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.thread-exchange-card {
+    background: rgba(6, 45, 75, 0.7);
+    border: 1px solid rgba(64, 210, 235, 0.2);
+    border-radius: 16px;
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+.thread-user-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.thread-role-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.user-pill {
+    background: #08cbbd;
+    color: #032747;
+}
+
+.ai-pill {
+    background: rgba(33, 224, 213, 0.2);
+    color: #21e0d5;
+    border: 1px solid rgba(33, 224, 213, 0.4);
+}
+
+.thread-question-text {
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.thread-assistant-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 14px;
+}
+
+.thread-assistant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.thread-badges-group {
+    display: flex;
+    gap: 8px;
+}
+
+.thread-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-conf-high {
+    background: rgba(18, 215, 196, 0.2);
+    color: #12d7c4;
+    border: 1px solid #12d7c4;
+}
+
+.badge-conf-medium, .badge-conf-normal {
+    background: rgba(37, 99, 235, 0.2);
+    color: #60a5fa;
+    border: 1px solid #60a5fa;
+}
+
+.badge-conf-low {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid #f87171;
+}
+
+.badge-safety-normal {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+}
+
+.badge-safety-warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+
+.badge-safety-emergency {
+    background: rgba(239, 68, 68, 0.25);
+    color: #f87171;
+    font-weight: 700;
+}
+
+.thread-answer-text {
+    color: #d6e8f5;
+    font-size: 14.5px;
+    line-height: 1.7;
+}
+
+.thread-citations-mini {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #8fb9d2;
+}
+
+.thread-citations-mini span {
+    color: #21e0d5;
+}
+
+/* Attached badge buttons */
+.attached-view-btn {
+    background: #08cbbd;
+    color: #032747;
+    border: none;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.attached-view-btn:hover {
+    background: #14f3e3;
+    transform: translateY(-1px);
+}
+
+/* Floating Word Selection Pill & Card (Phase 6) */
+.selection-floating-pill {
+    position: absolute;
+    z-index: 1500;
+    transform: translate(-50%, -100%);
+    animation: pill-pop 0.2s ease-out;
+}
+
+.selection-floating-pill button {
+    background: #08cbbd;
+    color: #032747;
+    border: 1px solid #21e0d5;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.selection-floating-pill button:hover {
+    background: #19f5e5;
+    transform: translateY(-2px);
+}
+
+@keyframes pill-pop {
+    from { opacity: 0; transform: translate(-50%, -85%); }
+    to { opacity: 1; transform: translate(-50%, -100%); }
+}
+
+.word-explanation-card {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    max-width: 420px;
+    width: 90%;
+    background: #063155;
+    border: 1px solid #21e0d5;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.5);
+    z-index: 1600;
+    animation: toast-fade 0.3s ease-out;
+}
+
+.word-explanation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid rgba(64, 210, 235, 0.25);
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.word-explanation-eyebrow {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #21e0d5;
+    letter-spacing: 0.8px;
+}
+
+.word-explanation-header h4 {
+    margin: 4px 0 0 0;
+    font-size: 18px;
+    color: #ffffff;
+}
+
+.word-close-btn {
+    background: transparent;
+    border: none;
+    color: #a2c4d6;
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.word-close-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.word-definition {
+    font-size: 14.5px;
+    color: #f0f7ff;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.word-meta-section {
+    font-size: 13px;
+    color: #bdd6e8;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+.word-meta-section strong {
+    color: #21e0d5;
+}
+
+/* Treatment Search Bar (Phase 4) */
+.treatment-search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.treatment-search-bar input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(64, 210, 235, 0.4);
+    background: #021a30;
+    color: #ffffff;
+    font-size: 14.5px;
+}
+
+.treatment-search-bar input:focus {
+    outline: none;
+    border-color: #21e0d5;
+    box-shadow: 0 0 0 3px rgba(33, 224, 213, 0.2);
+}
+
+.treatment-search-btn {
+    padding: 12px 20px;
+    background: #08cbbd;
+    color: #032747;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.treatment-search-btn:hover {
+    background: #14f3e3;
+}
+
+/* Treatment Table Styling */
+.treatment-modal-card {
+    max-width: 1100px;
+    width: 95%;
+}
+
+.treatment-table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(64, 210, 235, 0.25);
+    margin: 14px 0;
+}
+
+.treatment-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    text-align: left;
+    min-width: 800px;
+}
+
+.treatment-table th {
+    background: #042442;
+    color: #21e0d5;
+    padding: 14px 16px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(64, 210, 235, 0.3);
+}
+
+.treatment-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: #d6e8f5;
+    line-height: 1.5;
+    vertical-align: top;
+}
+
+.treatment-table tr:hover td {
+    background: rgba(33, 224, 213, 0.04);
+}
+
+/* PDF Report Modal Details (Phase 2) */
+.report-meta-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 14px 18px;
+    background: rgba(8, 203, 189, 0.08);
+    border: 1px solid rgba(8, 203, 189, 0.25);
+    border-radius: 12px;
+    margin-bottom: 18px;
+    font-size: 13.5px;
+    color: #d6e8f5;
+}
+
+.report-alert-card {
+    background: rgba(220, 38, 38, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+}
+
+.report-alert-card h4 {
+    margin: 0 0 6px 0;
+    color: #f87171;
+    font-size: 16px;
+}
+
+.abnormal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.abnormal-item {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+}
+
+.abnormal-val {
+    color: #fca5a5;
+    font-weight: 700;
+}
+
+.abnormal-desc {
+    color: #e2e8f0;
+    font-size: 12.5px;
+    margin-top: 4px;
+}
+
+.status-pill {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+.status-high, .status-low {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid #ef4444;
+}
+
+.status-normal {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid #10b981;
+}
+
+.report-disclaimer-box {
+    margin-top: 22px;
+    padding: 14px 18px;
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 4px solid #08cbbd;
+    font-size: 12px;
+    color: #a2c4d6;
+    line-height: 1.6;
+}
+
+/* Prescription Recognition & Verification (Phase 3) */
+.prescription-modal-card {
+    max-width: 1100px;
+    width: 95%;
+}
+
+.prescription-split-view {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 24px;
+}
+
+@media (max-width: 860px) {
+    .prescription-split-view {
+        grid-template-columns: 1fr;
+    }
+}
+
+.prescription-image-pane h4,
+.prescription-data-pane h4 {
+    margin: 0 0 12px 0;
+    color: #21e0d5;
+    font-size: 16px;
+}
+
+.prescription-img-container {
+    background: #021a30;
+    border: 1px solid rgba(64, 210, 235, 0.3);
+    border-radius: 12px;
+    padding: 8px;
+    text-align: center;
+    max-height: 440px;
+    overflow: auto;
+}
+
+.prescription-preview-img {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.prescription-readability-meta {
+    margin-top: 10px;
+    font-size: 13.5px;
+    color: #d6e8f5;
+}
+
+.prescription-abbr-box {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(8, 203, 189, 0.08);
+    border-radius: 10px;
+    font-size: 12.5px;
+    color: #bcd5e6;
+}
+
+.prescription-abbr-box ul {
+    margin: 6px 0 0 16px;
+    padding: 0;
+}
+
+.prescription-review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.prescription-med-card {
+    background: #042442;
+    border: 1px solid rgba(64, 210, 235, 0.25);
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+
+.prescription-med-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.clarity-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.clarity-high {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+
+.clarity-medium {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+
+.clarity-unclear, .clarity-unclearsverificationrequired {
+    background: rgba(239, 68, 68, 0.25);
+    color: #f87171;
+    font-weight: 700;
+}
+
+.prescription-grid-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px 12px;
+}
+
+.prescription-grid-inputs label,
+.prescription-med-card label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #8fb9d2;
+    margin-bottom: 3px;
+}
+
+.prescription-grid-inputs input,
+.prescription-med-card input {
+    width: 100%;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(64, 210, 235, 0.3);
+    background: #021a30;
+    color: #ffffff;
+    font-size: 13px;
+}
+
+.prescription-grid-inputs input:focus,
+.prescription-med-card input:focus {
+    outline: none;
+    border-color: #21e0d5;
+}
+
+.prescription-action-row {
+    margin-top: 16px;
+}
+
+.explained-med-item {
+    background: #042442;
+    border-left: 4px solid #08cbbd;
+    padding: 14px 16px;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 12px;
+}
+
+.explained-med-item h5 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    color: #21e0d5;
+}
+
+.explained-med-item p {
+    margin: 4px 0;
+    font-size: 13px;
+    color: #d6e8f5;
+    line-height: 1.5;
+}
+
+.explained-source-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #8fb9d2;
+}
+
+.prescription-interaction-box {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin: 14px 0;
+}
+
+.prescription-interaction-box h4 {
+    margin: 0 0 6px 0;
+    color: #fbbf24;
+    font-size: 14.5px;
+}
+
+.interaction-item {
+    font-size: 13px;
+    color: #fce7f3;
+}
+
+.prescription-warnings-box {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #fca5a5;
+    margin-bottom: 12px;
+}
+
+/* =========================================================
+   PHASE 8: RESPONSIVE BEHAVIOUR & BREAKPOINTS
+========================================================= */
+
+@media (max-width: 1024px) {
+    .chat-sidebar {
+        position: fixed;
+        top: 0;
+        left: -320px;
+        width: 300px;
+        height: 100vh;
+        z-index: 200;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 10px 0 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .chat-sidebar.sidebar-open {
+        left: 0;
+    }
+
+    .sidebar-close-btn {
+        display: block;
+    }
+
+    .chat-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .chat-content {
+        padding: 20px 4% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .chat-topbar {
+        padding: 0 16px;
+    }
+
+    .topbar-right .topbar-link {
+        display: none;
+    }
+
+    .chat-welcome h2 {
+        font-size: 26px !important;
+    }
+
+    .chat-question-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .controls-left {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .attachment-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .attachment-actions .attach-btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .chat-ask-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .action-tools-bar {
+        flex-direction: column;
+    }
+
+    .tool-action-btn, .ask-another-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .word-explanation-card {
+        bottom: 12px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-welcome {
+        padding: 22px 16px !important;
+    }
+
+    .chat-quick-buttons button {
+        width: 100%;
+        text-align: left;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr !important;
+    }
+}

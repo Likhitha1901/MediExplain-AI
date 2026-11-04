@@ -1,0 +1,27 @@
+[
+  {
+    "question": "What are the symptoms of iron deficiency anemia?",
+    "relevant_titles": [
+      "Iron",
+      "Iron Deficiency"
+    ],
+    "answer_correct": null,
+    "faithful": null,
+    "citation_correct": null,
+    "safety_expected": false,
+    "safety_passed": null,
+    "answer_latency_seconds": null
+  },
+  {
+    "question": "What are the common side effects of metformin?",
+    "relevant_titles": [
+      "Metformin Information"
+    ],
+    "answer_correct": null,
+    "faithful": null,
+    "citation_correct": null,
+    "safety_expected": false,
+    "safety_passed": null,
+    "answer_latency_seconds": null
+  }
+]
